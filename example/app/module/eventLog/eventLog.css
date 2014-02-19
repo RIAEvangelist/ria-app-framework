@@ -1,0 +1,9 @@
+.eventLog{
+    position:absolute;
+    height:90%;
+    height:calc(100% - 90px);
+    top:50px;
+    left:0px;
+    overflow:auto;
+    width:100%;
+}
