@@ -108,7 +108,7 @@ module's  folder, i.e. ` app/modules/{module name}/_example.html `. Once include
 The class of appModule denotes to app.js that the element is a dynamicly loaded module. 
 
 | data attribute | what it does |
----------------------------------
+|----------------|--------------|
 | data-moduletype| is the name of the module. This name will be the name of the  folder and files for the module. 
 It will also be the name of the module in the javascript. All of these strict naming conventions are takencare of by the
 command-line tool. |
