@@ -50,7 +50,6 @@ fs.exists(
         '.config'
     ),
     function(exists){
-        console.log('exists',exists)
         if(!exists)
             return;
             
