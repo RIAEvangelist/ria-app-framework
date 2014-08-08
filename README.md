@@ -109,13 +109,9 @@ The class of appModule denotes to app.js that the element is a dynamicly loaded 
 
 | data attribute | what it does |
 |----------------|--------------|
-| data-moduletype| is the name of the module. This name will be the name of the  folder and files for the module. 
-It will also be the name of the module in the javascript. All of these strict naming conventions are takencare of by the
-command-line tool. |
-| data-css       | denotes weather the module has css that should be loaded or not. This can be set manually in the html or through the command-line tool via
-the paramater ` no-css ` when creating the module. The default is to include css |
-| data-js        | denotes weather the module has html that should be loaded or not. This can be set manually in the html or through the command-line tool 
-via the paramater ` no-html ` when creating the module. The default is to include html |
+| data-moduletype| is the name of the module. This name will be the name of the  folder and files for the module. It will also be the name of the module in the javascript. All of these strict naming conventions are takencare of by the command-line tool. |
+| data-css       | denotes weather the module has css that should be loaded or not. This can be set manually in the html or through the command-line tool via the paramater ` no-css ` when creating the module. The default is to include css |
+| data-js        | denotes weather the module has html that should be loaded or not. This can be set manually in the html or through the command-line tool via the paramater ` no-html ` when creating the module. The default is to include html |
 
 Feel free to edit the html element tag, class and other data but make sure the above required data points are always there.
 
