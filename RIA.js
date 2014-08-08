@@ -44,6 +44,51 @@ var fs          = require('fs'),
 process.stdout.write('\n\n# Welcome to the RIA App tool.\n\n>');
 process.stdin.setEncoding('utf8');
 
+console.log(path.resolve(
+        config.root,
+        '.config'
+    ))
+
+fs.exists(
+    path.resolve(
+        config.root,
+        '.config'
+    ),
+    function(exists){
+        console.log('exists',exists)
+        if(!exists)
+            return;
+            
+        fs.readFile(
+            path.resolve(
+                config.root,
+                '.config'
+            ),
+            {
+                encoding:'UTF-8'
+            }, 
+            function(err,data){
+                if(err){
+                    console.log('!!! error reading app .config file');
+                    console.log(err);
+                    return;
+                }
+                
+                try{
+                    config=JSON.parse(data);
+                }catch(err){
+                    console.log('!!! app .config file error');
+                    console.log(err);
+                    return;
+                }
+                
+                console.log('app config loaded');
+                console.log(config);
+            }
+        );
+    }
+)
+
 process.stdin.on(
     'readable', 
     function() {
@@ -138,7 +183,18 @@ function createModule(chunk,lowerChunk){
     createNewModule();
 }
 
+function guidedModuleCreation(){
+    process.stdout.write('Invalid syntax, missing module name. Type help for more information.');
+}
+
 function createNewModule(){
+    process.stdout.write('creating module for app in '+
+        path.resolve(
+            config.root,
+            config.modulePath
+        )
+    );
+    
     var modulePath=path.resolve(
         config.root,
         config.modulePath+'/'+
@@ -203,6 +259,7 @@ function createNewModule(){
 }
 
 function createNewApp(){
+    process.stdout.write('initializing app in '+config.root);
     var paths={
         app     : path.resolve(
             config.root,
@@ -365,7 +422,6 @@ function help(){
     
     process.stdout.write('\n');
     process.stdout.write('Create a new module : \n');
-    process.stdout.write('>create module\n');
     process.stdout.write('>create module moduleName\n');
     process.stdout.write('>create module moduleName no-css no-html\n');
     
