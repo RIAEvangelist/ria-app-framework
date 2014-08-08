@@ -2,6 +2,9 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+cp RIA.js ria
+cp RIA.js RIA
+
 if grep -F $DIR ~/.bashrc
 	then
 		echo "!!! RIA command line tool ready to use"

@@ -44,11 +44,6 @@ var fs          = require('fs'),
 process.stdout.write('\n\n# Welcome to the RIA App tool.\n\n>');
 process.stdin.setEncoding('utf8');
 
-console.log(path.resolve(
-        config.root,
-        '.config'
-    ))
-
 fs.exists(
     path.resolve(
         config.root,
@@ -69,8 +64,7 @@ fs.exists(
             }, 
             function(err,data){
                 if(err){
-                    console.log('!!! error reading app .config file');
-                    console.log(err);
+                    
                     return;
                 }
                 
