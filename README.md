@@ -58,6 +58,11 @@ Once initialized you can create new modules from the root dir of the app as show
 
 This will create, properly name, structure and configure new empty app modules for development.
 
+You can force a module to have no html or css by adding either or both of the appropriate parameters to the create command.
+
+    >create module api no-css no-html
+
+
 ## Basic usage :
 #### Setup
 
@@ -73,7 +78,46 @@ This will create, properly name, structure and configure new empty app modules f
         </body>
     </html>
 
-All that needs be done to get the core architecture working is to include the app.css, and app.js. We do recommend including app.data.js as a place to initialize any data you want to be shared among modules.
+All that needs be done to get the core architecture working is to include the app.css, and app.js. We do recommend including app.data.js as a place to 
+initialize any data you want to be shared among modules.
+
+#### Loading Modules
+After creating a module via the command-line tool, you can load it into the app by placing it into the html using the _example.html file located in the 
+module's  folder, i.e. ` app/modules/{module name}/_example.html `. Once included the app html might look something like this :
+
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <link rel="stylesheet" href="app/core/app.css" />
+            <script src='app/core/app.js'></script>
+            <script src='app/core/app.data.js'></script>
+        </head>
+        <body class='working'>
+            <header class='appModule' 
+                data-moduletype='header'
+                data-css='true' 
+                data-html='true'></header>
+            
+            <footer class='appModule' 
+                data-moduletype='footer' 
+                data-css='true' 
+                data-html='true'></footer>
+        </body>
+    </html>
+
+The class of appModule denotes to app.js that the element is a dynamicly loaded module. 
+
+| data attribute | what it does |
+---------------------------------
+| data-moduletype| is the name of the module. This name will be the name of the  folder and files for the module. 
+It will also be the name of the module in the javascript. All of these strict naming conventions are takencare of by the
+command-line tool. |
+| data-css       | denotes weather the module has css that should be loaded or not. This can be set manually in the html or through the command-line tool via
+the paramater ` no-css ` when creating the module. The default is to include css |
+| data-js        | denotes weather the module has html that should be loaded or not. This can be set manually in the html or through the command-line tool 
+via the paramater ` no-html ` when creating the module. The default is to include html |
+
+Feel free to edit the html element tag, class and other data but make sure the above required data points are always there.
 
 more coming soon...
 
