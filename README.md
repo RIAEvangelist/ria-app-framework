@@ -1,8 +1,79 @@
-ria-app-framework
+RIA App framework
 =================
 
-Modular HTML5 &amp; JavaScript RIA Framework. Designed for maintainability, simplicity, and rapid development.
+Bare bones and extremely light weight HTML5/JavaScript RIA Framework. Designed for maintainability, simplicity, and rapid development.
+
+This framework implements a dynamic MV* structure for app development, and does not implement any UI or UX styles, it is only meant to make your 
+development faster, more maintainable, and more **reuseable** via a modular approach.
 
 This framework is stable and ready for production use.  
 
-Documentation coming soon...
+## Command-line tool
+#### Installation
+The RIA Command-line tool makes initializing app directories and creating new modules simple. It can easily be installed by running :
+
+` npm install ria -g `
+
+#### Initializing an app
+Once installed you will need to re-open your terminal to have access to the ria tool. Navigate to a directory you wish to initialize as an RIA app.
+Run the ` ria ` command to launch the tool and then once in the tool run the ` init ` command. It should look something like this :
+
+    brandon@digiNowU1:~$ cd git
+    brandon@digiNowU1:~/git$ mkdir test
+    brandon@digiNowU1:~/git$ cd test
+    brandon@digiNowU1:~/git/test$ ria
+    
+    
+    # Welcome to the RIA App tool.
+    
+    >init
+    >### Writing /home/brandon/git/test/app/core/app.data.js
+    ### Writing /home/brandon/git/test/app/core/app.css
+    ### Writing /home/brandon/git/test/app/core/app.js
+    
+    >
+    
+Once you have run this command the directory structure and core files will be created and installed in the correct locations.
+
+#### Creating modules
+Once initialized you can create new modules from the root dir of the app as shown below :
+
+    brandon@digiNowU1:~/git/test$ cd ~/git/test
+    brandon@digiNowU1:~/git/test$ ria
+    
+    
+    # Welcome to the RIA App tool.
+    
+    >create module header
+    creating module for app in /home/brandon/git/test/app/module>### Writing /home/brandon/git/test/app/module/header/header.css
+    ### Writing /home/brandon/git/test/app/module/header/header.html
+    ### Writing /home/brandon/git/test/app/module/header/header.js
+    ### Writing /home/brandon/git/test/app/module/header/_example.html
+    
+    >create module footer
+    creating module for app in /home/brandon/git/test/app/module>### Writing /home/brandon/git/test/app/module/footer/footer.html
+    ### Writing /home/brandon/git/test/app/module/footer/footer.js
+    ### Writing /home/brandon/git/test/app/module/footer/_example.html
+    ### Writing /home/brandon/git/test/app/module/footer/footer.css
+
+This will create, properly name, structure and configure new empty app modules for development.
+
+## Basic usage :
+#### Setup
+
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <link rel="stylesheet" href="app/core/app.css" />
+            <script src='app/core/app.js'></script>
+            <script src='app/core/app.data.js'></script>
+        </head>
+        <body>
+            
+        </body>
+    </html>
+
+All that needs be done to get the core architecture working is to include the app.css, and app.js. We do recommend including app.data.js as a place to initialize any data you want to be shared among modules.
+
+more coming soon...
+

@@ -75,8 +75,7 @@ fs.exists(
                     return;
                 }
                 
-                console.log('app config loaded');
-                console.log(config);
+                console.log('app config loaded\n>');
             }
         );
     }
