@@ -1,6 +1,6 @@
 {
   "name": "ria",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Node tool for developing RIA Apps using the RIA app framework. Helps initialize the app and create modules using UI templates and archetecture.",
   "main": "RIA",
   "directories": {
