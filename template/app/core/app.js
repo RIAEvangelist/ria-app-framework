@@ -5,7 +5,7 @@ var app=(
     Scope
 \************/
         var config={
-            modulesPath : 'app/module/'
+            modulesPath : '${modulePath}'
         }
         
         var modules,
