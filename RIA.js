@@ -376,10 +376,12 @@ function gotFile(filePath,type,key,data){
             var fileName=moduleData.name+path.extname(filePath);
             if(path.basename(filePath)=='_example.html'){
                 fileName='_example.html';
-                data=data.replace(/\$\{moduleName\}/g,moduleData.name)
+            }
+            
+            data=data.replace(/\$\{moduleName\}/g,moduleData.name)
                     .replace(/\$\{css\}/g,moduleData.css)
                     .replace(/\$\{html\}/g,moduleData.html);
-            }
+            
             toPath=path.resolve(
                 config.root,
                 config.modulePath+'/'+
