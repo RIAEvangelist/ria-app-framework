@@ -6,5 +6,5 @@ body{
 
 
 body * {
-    position:absolute;
+    position:relative;
 }
