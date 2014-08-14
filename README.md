@@ -115,5 +115,49 @@ The class of appModule denotes to app.js that the element is a dynamicly loaded 
 
 Feel free to edit the html element tag, class and other data but make sure the above required data points are always there.
 
-more coming soon...
+## App events and cross module communication
+You can trigger events globally in the App scope so that any interested modules can react and use the data passed as needed.
 
+#### binding event listeners
+
+``app.on`` is the binding function. It takes 2 paramaters.
+
+1. The event name
+2. Refrence to the callback
+
+With an anonymous callback, it is important to note that anonymous callbacks are re created every time they are executed so are more memory intensive than callback refrences 
+if used for events triggered a lot. They are less memory intensive than refrence callbacks if the event is rarely triggered.
+
+
+    app.on(
+        'myEvent',
+        function(myName,myAge){
+            console.log(myName,myAge);
+        }
+    );
+    
+With a callback function refrence, it is important to note that refrenced callbacks are always in memory so they use more memory than anonymous callbacks for events that are rarely triggered, 
+but save memory on events that are triggered a lot.
+    
+    app.on(
+        'myEvent',
+        handleMe
+    );
+    
+    function handleMe(myName,myAge){
+        console.log(myName,myAge);
+    }
+    
+#### triggering events
+
+``app.trigger`` is the event dispatching function. It takes a minimum of one argument and an unlimited maximum number of arguments.
+
+The first argument is the event name, and every argument after that is sent as an argument to the callback.
+
+    app.trigger(
+        'myEvent',
+        'Brandon',
+        29
+    );
+    
+    
