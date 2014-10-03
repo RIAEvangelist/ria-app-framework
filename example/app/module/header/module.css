@@ -1,0 +1,14 @@
+/*
+    CSS for the header module.
+    Do not leave file empty.
+*/
+
+.header-module{
+    width:100%;
+    padding:20px;
+    position:fixed;
+    top:0;
+    left:0;    
+    background-color: rgb(200,200,200);
+    z-index:1000;
+}

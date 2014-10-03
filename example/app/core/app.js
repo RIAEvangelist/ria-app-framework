@@ -61,7 +61,7 @@ var app=(
                                     if(moduleQueue[moduleType])
                                         return;
                                     
-                                    var module=config.modulesPath+moduleType+'/'+moduleType;
+                                    var module=config.modulesPath+moduleType+'/module';
                                     moduleQueue[moduleType]=true;
                                     
                                     var js = document.createElement('script');
@@ -77,8 +77,8 @@ var app=(
                                     css.type='text/css'; 
                                     css.setAttribute('href', module+'.css');
                                     document.head.appendChild(css);
-                                }
-                                ,0
+                                },
+                                0
                             );
                         }
                     )(config,moduleType,moduleQueue,el);
@@ -103,7 +103,7 @@ var app=(
                         function(){
                             setTimeout(
                                 function(){
-                                    console.log(el);
+                                    //console.log(el);
                                     buildModules(el);
                                 },
                                 50
@@ -132,7 +132,7 @@ var app=(
                 }
             )(moduleType);
             
-            xmlhttp.open('GET',config.modulesPath+moduleType+'/'+moduleType+'.html',true);
+            xmlhttp.open('GET',config.modulesPath+moduleType+'/module.html',true);
             xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
             xmlhttp.send();
         }
@@ -165,6 +165,130 @@ var app=(
                     );
                 }
             )(el);
+        }
+        
+        function showModuleGroup(group){
+            if(!app.data.layout)
+                return;
+            if(!group)
+                group=app.data.layout.startAt;
+                
+            var modules=document.getElementsByClassName('appModule');
+            var screenContains=Object.keys(
+                app.data.layout.modules.ui[group]
+            );
+            
+            for(var i=0; i<modules.length; i++){
+                var type=modules[i].getAttribute(
+                    'data-moduletype'
+                );
+                //console.log(type)
+                if(screenContains.indexOf(type)>-1){
+                    modules[i].classList.remove('hidden');
+                    continue;
+                }
+                
+                modules[i].classList.add('hidden');
+            }
+        }
+        
+        function layoutApp(layout){
+            if(!layout.lib)
+                layout.lib=[];
+            if(!layout.modules)
+                layout.modules={};
+                
+            for(var i=0; i<layout.lib.length; i++){
+                var lib;
+                switch(layout.lib[i].type){
+                    case 'css' :
+                        lib = document.createElement('link');
+                        lib.setAttribute('href', layout.lib[i].path);
+                        lib.setAttribute('rel', 'stylesheet');
+                        break;
+                    case 'js':
+                        lib = document.createElement('script');
+                        lib.setAttribute('async', true);
+                        lib.setAttribute('src', layout.lib[i].path);
+                        break;
+                }
+                
+                document.head.appendChild(lib);
+            }
+            
+            for(var i=0; i<layout.modules.logic.length; i++){
+                var newModule=createModuleElement(layout.modules.logic[i],'false','false');
+                
+                appendDOMNode(newModule);
+            }
+            
+            var modulesToUse=Object.keys(layout.modules.ui);
+            for(var i=0; i<modulesToUse.length; i++){
+                var modulesInGroup=Object.keys(layout.modules.ui[modulesToUse[i]]);
+                for(var j=0; j<modulesInGroup.length; j++){
+                    var name=modulesInGroup[j];
+                    //console.log(name);
+                }
+            }
+            
+            var fullList={};
+            var screenList=Object.keys(layout.modules.ui);
+            for(var i=0; i<screenList.length; i++){
+                var screenModules=Object.keys(
+                    layout.modules.ui[screenList[i]]
+                );
+                //console.log('screenMuduleList',screenModules);
+                for(var j=0; j<screenModules.length; j++){
+                    //console.log('screenMudule',screenModules[j]);
+                    fullList[screenModules[j]]=true;
+                }
+            }
+            //console.log(fullList)
+            var layoutModules=Object.keys(fullList);
+            for(var i=0; i<layoutModules.length; i++){
+                //console.log('screenMudule',layoutModules[i]);
+                name=layoutModules[i];
+
+                var newModule=createModuleElement(name);
+
+                appendDOMNode(newModule);
+            }
+            
+        }
+        
+        function createModuleElement(name,html,css){
+            var newModule=document.createElement("div"); 
+            //console.log(name)
+            if(!html)
+                html='true';
+            if(!css)
+                css='true';
+            
+            newModule.id=name+'-module';
+            newModule.classList.add(
+                'appModule',
+                'hidden',
+                name+'-module'
+            );
+            
+            newModule.setAttribute(
+                'data-dompath',
+                'body'
+            );
+            newModule.setAttribute(
+                'data-moduletype',
+                name
+            );
+            newModule.setAttribute(
+                'data-html',
+                html
+            );
+            newModule.setAttribute(
+                'data-css',
+                css
+            );
+            
+            return newModule;
         }
         
         function checkModuleExists(moduleType){
@@ -201,7 +325,7 @@ var app=(
         function registerEvent(eventName,handler){
             if(!events[eventName])
                 events[eventName]=[];
-				
+			
             events[eventName].push(handler);
         }
 		
@@ -235,6 +359,9 @@ var app=(
         
         return {
             register        : addConstructor,
+            layout          : layoutApp,
+            navigate        : showModuleGroup,
+            createModule    : createModuleElement,
             build           : buildModules,
             inject          : appendDOMNode,
             config          : setConfig,

@@ -1,21 +1,23 @@
 (
     function(){
-        var moduleName='nav';
+        var moduleName='helloWorld';
         
         function render(el){
             el.addEventListener(
                 'click',
                 handleClicks
             );
-            
-            app.trigger('log',moduleName,'READY!');
         }
         
         function handleClicks(e){
-            if(e.target.tagName!='LI')
+            if(!e.target.id)
                 return;
-                
-            app.trigger('log','Header Item',e.target.getAttribute('data-item'),'Clicked');
+            
+            switch(e.target.id){
+                case 'findCheech' :
+                    app.navigate('davesNotHereMan');
+                    break;
+            }
         }
         
         exports(moduleName,render);    
