@@ -167,15 +167,29 @@ var app=(
             )(el);
         }
         
-        function showModuleGroup(group){
+        /*
+         * 
+         * @param {string} screen : the name of the screen or group of modules 
+         * from the app.data.layout object you wish to see
+         * 
+         * @param {object} stateObject : defaults to {screen:the passed screen name}
+         * @returns {undefined}
+         */
+        function showModuleGroup(screen,stateObject){
             if(!app.data.layout)
                 return;
-            if(!group)
-                group=app.data.layout.startAt;
-                
+            if(!screen)
+                screen=app.data.layout.startAt;
+            if(!stateObject)
+                stateObject={
+                    screen:screen
+                };
+            if(!stateObject.screen)
+                stateObject.screen=screen;
+            
             var modules=document.getElementsByClassName('appModule');
             var screenContains=Object.keys(
-                app.data.layout.modules.ui[group]
+                app.data.layout.modules.ui[screen]
             );
             
             for(var i=0; i<modules.length; i++){
@@ -190,7 +204,25 @@ var app=(
                 
                 modules[i].classList.add('hidden');
             }
+            
+            history.pushState(
+                stateObject,
+                screen,
+                screen
+            );
         }
+        
+        window.addEventListener(
+            'popstate',
+            function(e){
+                console.log(e);
+                var state=e.state;
+                app.navigate(
+                    state.screen,
+                    state
+                );
+            }
+        );
         
         function layoutApp(layout){
             if(!layout.lib)
@@ -318,6 +350,37 @@ var app=(
                     break;
             }
         }
+        
+/************\
+    Utils
+\************/
+        
+        /*
+         * 
+         * @param {string} id
+         * @param {object} values should contain the key value pairs for all template Data
+         * @returns {DocumentFragment} Filled out Template Element
+         */
+        function fillTemplate(id, values){
+            var template=document.getElementById(id).innerHTML;
+            var completeTemplate = document.createDocumentFragment();
+            
+            var keys=Object.keys(values);
+            for(var i=0; i<keys.length; i++){
+                var regEx=new RegExp(
+                    '\\$\\{'+keys[i]+'\\}',
+                    'g'
+                );
+        
+                template=template.replace(
+                    regEx,values[keys[i]]
+                )
+            }
+            
+            completeTemplate.innerHTML=template;
+            
+            return completeTemplate;
+        }
 
 /************\
     Events
@@ -367,6 +430,7 @@ var app=(
             config          : setConfig,
             on              : registerEvent,
             off             : removeEvent,
+            template        : fillTemplate,
             trigger         : triggerEvent,
             exists          : checkModuleExists,
             data            : dataStore
