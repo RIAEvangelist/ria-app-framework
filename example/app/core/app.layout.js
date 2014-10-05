@@ -97,6 +97,15 @@ window.addEventListener(
          */
         setTimeout(
             function(){
+                if(history.state){
+                    if(history.state.screen){
+                        app.navigate(
+                            history.state.screen,
+                            history.state
+                        );
+                        return;
+                    }
+                }
                 
                 /*
                  * 
