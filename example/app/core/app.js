@@ -208,16 +208,21 @@ var app=(
             history.pushState(
                 stateObject,
                 screen,
-                screen
+                '#'+screen
             );
         }
         
         window.addEventListener(
             'popstate',
             function(e){
-                console.log(e);
                 var state=e.state;
-                app.navigate(
+                if(!state)
+                    state={};
+                
+                if(!state.screen)
+                    state.screen=document.location.hash.slice(1);
+                
+                showModuleGroup(
                     state.screen,
                     state
                 );
@@ -381,7 +386,28 @@ var app=(
             
             return completeTemplate;
         }
-
+        
+/************\
+    Error
+\************/
+                        
+        /**
+        * custom application error
+        * 
+        * @param {string} message
+        * @param {string} type
+        * @returns {AppError}
+        */
+        function AppError(message, type) {
+           this.name = "AppError";
+           this.message = message || "Application Error Message";
+           this.type = type || "Generic Application Error"; // possible error types are User, Api, etc...
+        }
+        AppError.prototype = new Error();
+        AppError.prototype.constructor = AppError;
+        window.AppError = AppError;
+        
+        
 /************\
     Events
 \************/
@@ -432,6 +458,7 @@ var app=(
             off             : removeEvent,
             template        : fillTemplate,
             trigger         : triggerEvent,
+            error           : AppError,
             exists          : checkModuleExists,
             data            : dataStore
         }
