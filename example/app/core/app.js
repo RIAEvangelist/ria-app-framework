@@ -15,7 +15,9 @@ var app=(
             dataStore={
                 hasWebkitSpeech:(document.createElement("input").hasOwnProperty('webkitSpeech')),
                 hasSpeech:(document.createElement("input").hasOwnProperty('speech')),
-                HTML:{}
+                HTML:{},
+                JS:{},
+                CSS:{}
             }
         
         function setConfig(userConfig){
@@ -65,9 +67,10 @@ var app=(
                                     moduleQueue[moduleType]=true;
                                     
                                     var js = document.createElement('script');
-                                    js.setAttribute('async', true);
+                                    js.async=true;
                                     js.setAttribute('src', module+'.js');
                                     document.head.appendChild(js);
+                                    dataStore.JS[moduleType]=js.outerHTML;
                                     
                                     if(el.getAttribute('data-css')!='true')
                                         return;
@@ -77,6 +80,7 @@ var app=(
                                     css.type='text/css'; 
                                     css.setAttribute('href', module+'.css');
                                     document.head.appendChild(css);
+                                    dataStore.CSS[moduleType]=css.outerHTML;
                                 },
                                 0
                             );
@@ -150,6 +154,15 @@ var app=(
         
         function deferredLoad(type){
             buildModules(document.querySelectorAll('[data-moduletype="'+type+'"]'));
+        }
+        
+        function renderCompiledApp(){
+            var modules=Object.keys(constructors);
+            for(var i=0; i<modules.length; i++){
+                constructors[modules[i]](
+                    document.getElementById(modules[i]+'-module')
+                )
+            }
         }
         
         function appendDOMNode(el){
@@ -362,13 +375,22 @@ var app=(
         
         /*
          * 
-         * @param {string} id
+         * @param {string} id id of element to fetch innerHTML as contents for template
+         *                  or raw string to be used as template if rawString set to true
          * @param {object} values should contain the key value pairs for all template Data
-         * @returns {DocumentFragment} Filled out Template Element
+         * @param {bool} rawString use id as a raw string
+         * @param {bool} asString return as string
+         * @returns {DocumentFragment} if asString is false or not specified will return Filled out Template Element
+         * @returns {string} if asString is true will return a filled out template string 
          */
-        function fillTemplate(id, values){
-            var template=document.getElementById(id).innerHTML;
-            var completeTemplate = document.createDocumentFragment();
+        function fillTemplate(id, values, rawString, asString){
+            var template=id;
+            
+            if(!id)
+                throw new AppError('Templates must specify either id or a string+rawString flag','app.template');
+            
+            if(!rawString)
+                template=document.getElementById(id).innerHTML;
             
             var keys=Object.keys(values);
             for(var i=0; i<keys.length; i++){
@@ -382,9 +404,79 @@ var app=(
                 )
             }
             
-            completeTemplate.innerHTML=template;
+            var completeTemplate=template;
+            
+            if(!asString){
+                completeTemplate = document.createDocumentFragment();
+                completeTemplate.innerHTML=template;
+            }
             
             return completeTemplate;
+        }
+        
+        function getCurrentCompiledState(){
+            var html='<html class="compiled-app"><head>${head}</head><body>${body}</body></html>';
+            var defaults='<link rel="stylesheet" href="app/core/app.css" />'
+                    +'<script src="app/core/app.js"></script>'
+                    +'<script src="app/core/app.data.js"></script>'
+                    +'<script src="app/core/app.layout.js"></script>';
+            this.body='';
+            this.head='';
+            var list=[
+                'HTML',
+                'CSS',
+                'JS'
+            ];
+            
+            function compileModule(name,content){
+                var module=createModuleElement(
+                    name
+                );
+                
+                module.innerHTML=content;
+                
+                this.body+=module.outerHTML;
+            }
+            
+            for(var j=0; j<list.length; j++){
+                var keys=Object.keys(dataStore[list[j]]);
+                for(var i=0; i<keys.length;i++){
+                    if(list[j]!="HTML"){
+                        console.log(list[j],keys[i]);
+                        this.head+=dataStore[
+                            list[j]
+                        ][
+                            keys[i]
+                        ];
+                        continue;
+                    }
+                    
+                    console.log(list[j],keys[i]);
+                    compileModule.call(
+                        this,
+                        keys[i],
+                        dataStore[
+                            list[j]
+                        ][
+                            keys[i]
+                        ]
+                    );
+                }
+            }
+            
+            
+            return fillTemplate(
+                html,
+                {
+                    head:defaults+this.head,
+                    body:this.body
+                },
+                true,
+                true
+            ).replace(
+                /\s+/g,
+                ' '
+            );
         }
         
 /************\
@@ -444,7 +536,18 @@ var app=(
         }
         
         window.exports=addConstructor;
-        document.onreadystatechange=initModules;
+        document.addEventListener(
+            'readystatechange',
+            function(){
+                dataStore.compiled=document.querySelector('html').classList.contains('compiled-app');
+                if(!dataStore.compiled){
+                    initModules();
+                    return;
+                }
+                
+                renderCompiledApp();
+            }
+        );
         
         return {
             register        : addConstructor,
@@ -459,6 +562,7 @@ var app=(
             template        : fillTemplate,
             trigger         : triggerEvent,
             error           : AppError,
+            compile         : getCurrentCompiledState,
             exists          : checkModuleExists,
             data            : dataStore
         }

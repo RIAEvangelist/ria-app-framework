@@ -80,7 +80,8 @@ window.addEventListener(
          * @param layout Object 
          * 
          */
-        app.layout(app.data.layout);
+        if(!app.data.compiled)
+            app.layout(app.data.layout);
         
         /*
          * 
@@ -111,7 +112,7 @@ window.addEventListener(
                     app.data.layout.startAt
                 );
             },
-            500
+            100
         )
     }
 );
