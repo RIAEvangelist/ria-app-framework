@@ -404,7 +404,7 @@ var app=(
          * @param {object} values should contain the key value pairs for all template Data
          * @param {bool} rawString use id as a raw string
          * @param {bool} asString return as string
-         * @returns {DocumentFragment} if asString is false or not specified will return Filled out Template Element
+         * @returns {DomElement} if asString is false or not specified will return Filled out Template Element
          * @returns {string} if asString is true will return a filled out template string
          */
         function fillTemplate(id, values, rawString, asString){
@@ -431,8 +431,9 @@ var app=(
             var completeTemplate=template;
 
             if(!asString){
-                completeTemplate = document.createDocumentFragment();
+                completeTemplate = document.createElement('div');
                 completeTemplate.innerHTML=template;
+                completeTemplate=completeTemplate.querySelector('*');
             }
 
             return completeTemplate;
