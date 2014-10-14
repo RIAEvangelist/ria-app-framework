@@ -188,10 +188,10 @@ var app=(
                 }
             )(el);
         }
-
-        /*
-         *
-         * @param {string} screen : the name of the screen or group of modules
+        
+        /**
+         * 
+         * @param {string} screen : the name of the screen or group of modules 
          * from the app.data.layout object you wish to see
          *
          * @param {object} stateObject : defaults to {screen:the passed screen name}
@@ -228,10 +228,10 @@ var app=(
             }
 
             triggerEvent(
-                'app.navigated.'+screen,
+                'app.navigated',
                 stateObject
-            )
-
+            );
+            
             history.pushState(
                 stateObject,
                 screen,
@@ -242,7 +242,7 @@ var app=(
         registerEvent(
             'app.navigate',
             showModuleGroup
-        )
+        );
 
         window.addEventListener(
             'popstate',
@@ -536,7 +536,143 @@ var app=(
         AppError.prototype.constructor = AppError;
         window.AppError = AppError;
 
-
+/************\
+    Storage
+\************/
+        function Storage(){
+            var storage={
+                get     : false,
+                set     : false,
+                remove  : false,
+                clear   : false
+            };
+            
+            function fetchAllData(callback){
+                var response={};
+                for(var key in localStorage){
+                    response[key]=localStorage.getItem(key);
+                }               
+                
+                runCallback(callback,response);
+            }
+            
+            function useLocalStorage(command,data,callback){
+                if(!command || !data)
+                    return;
+                
+                var response={};
+                for(var key in data){
+                    if(command!=='setItem'){
+                        response[key]=localStorage[command](key);
+                        continue;
+                    }
+                    
+                    response[key]=localStorage[command](key,data[key]);
+                }
+                
+                if(command!='getItem')
+                    response=undefined;
+            
+                runCallback(callback,response);
+            }
+            
+            function runCallback(callback,response){
+                if(!callback)
+                    return;
+                
+                callback(
+                    response
+                );
+            }
+            
+            function html5get(data,callback){
+                if(!callback)
+                    return;
+                
+                if(data===null){
+                    fetchAllData(callback);
+                    return;
+                }
+                
+                if(typeof data === "string"){
+                    var response={};
+                    response[data]=localStorage.getItem(data);
+                    runCallback(
+                        callback,
+                        response
+                    );
+                    return;
+                }
+                
+                useLocalStorage('getItem',data,callback);
+            }
+            
+            function html5set(data,callback){
+                useLocalStorage('setItem',data,callback);
+            }
+            
+            function html5remove(data,callback){
+                if(typeof data === "string"){
+                    localStorage.remove(data);
+                    runCallback(
+                        callback,
+                        undefined
+                    );
+                    return;
+                }
+                useLocalStorage('remove',data,callback);
+            }
+            
+            function html5clear(callback){
+                localStorage.clear();
+                runCallback(
+                    callback,
+                    undefined
+                );
+            }
+            
+            function chromeGet(data,callback){
+                chrome.storage.local.get(data,callback);
+            }
+            
+            function chromeSet(data,callback){
+                chrome.storage.local.set(data,callback);
+            }
+            
+            function chromeRemove(data,callback){
+                chrome.storage.local.remove(data,callback);
+            }
+            
+            function chromeClear(callback){
+                chrome.storage.local.clear();
+            }
+            
+            if(localStorage){
+                storage.get=html5get;
+                storage.set=html5set;
+                storage.remove=html5set;
+                storage.clear=html5clear;
+            }
+            
+            if(chrome){
+                if(!chrome.storage && !localStorage){
+                    console.log('no supported storage methods');
+                    return storage;
+                }
+                if(!chrome.storage)
+                    return storage;
+                
+                storage.get=chromeGet;
+                storage.set=chromeSet;
+                storage.remove=chromeRemove;
+                storage.clear=chromeClear;
+            }
+            
+                
+            return storage;
+        }
+        
+        
 /************\
     Events
 \************/
@@ -601,7 +737,8 @@ var app=(
             error           : AppError,
             compile         : getCurrentCompiledState,
             exists          : checkModuleExists,
-            data            : dataStore
+            data            : dataStore,
+            storage         : new Storage()
         }
 
     }
