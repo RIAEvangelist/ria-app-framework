@@ -3,6 +3,8 @@ RIA App framework
 
 ***v 2.0.0 app.js is not completely backwards compatible. In order to get v1.x.x to work with v 2.x you need to change the names of the files in the modules folders to module.css, module.js, and module.html. once you do this v2.x will work fone with v1.x modules.*** 
 
+### Documentation needs to be updated to show updates and latest features.
+
 Bare bones and extremely light weight HTML5/JavaScript RIA Framework. Designed for maintainability, simplicity, and rapid development.
 
 This framework implements a dynamic MV* structure for app development, and does not implement any UI or UX styles, it is only meant to make your 
