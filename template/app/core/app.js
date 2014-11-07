@@ -1,3 +1,8 @@
+// check for chrome variable to be defnined (safary)
+if (typeof chrome === 'undefined') {
+    chrome = false;
+}
+
 var app=(
     function(){
 
@@ -6,7 +11,7 @@ var app=(
 \************/
         var config={
             modulesPath : 'app/module/'
-        }
+        };
 
         var modules,
             constructors={},
@@ -18,7 +23,7 @@ var app=(
                 HTML:{},
                 JS:{},
                 CSS:{}
-            }
+            };
 
         if(history){
           history={
@@ -26,15 +31,16 @@ var app=(
               history.state=stateObject;
             },
             state:{}
-          }
+          };
         }
 
         function setConfig(userConfig){
             for(var property in userConfig){
-                if(!userConfig.hasOwnProperty('property'))
+                if(userConfig.hasOwnProperty('property')) {
+                    config[property] = userConfig[property];
+                } else {
                     return;
-
-                config[property] = userConfig[property];
+                }
             }
         }
 
@@ -72,24 +78,25 @@ var app=(
                                     if(moduleQueue[moduleType])
                                         return;
 
-                                    var module=config.modulesPath+moduleType+'/module';
-                                    moduleQueue[moduleType]=true;
+                                    var module = config.modulesPath + moduleType + '/module';
+                                    moduleQueue[moduleType] = true;
 
                                     var js = document.createElement('script');
-                                    js.async=true;
-                                    js.setAttribute('src', module+'.js');
+                                    js.async = true;
+                                    js.setAttribute('src', module + '.js');
                                     document.head.appendChild(js);
-                                    dataStore.JS[moduleType]=js.outerHTML;
+                                    dataStore.JS[moduleType] = js.outerHTML;
 
-                                    if(el.getAttribute('data-css')!='true')
+                                    if (el.getAttribute('data-css') != 'true') {
                                         return;
+                                    }
 
                                     var css = document.createElement('link');
-                                    css.rel='stylesheet';
-                                    css.type='text/css';
-                                    css.setAttribute('href', module+'.css');
+                                    css.rel = 'stylesheet';
+                                    css.type = 'text/css';
+                                    css.setAttribute('href', module + '.css');
                                     document.head.appendChild(css);
-                                    dataStore.CSS[moduleType]=css.outerHTML;
+                                    dataStore.CSS[moduleType] = css.outerHTML;
                                 },
                                 0
                             );
@@ -102,16 +109,17 @@ var app=(
                     continue;
                 }
 
-                if(app.data.HTML[moduleType])
-                    HTMLLoaded(el,moduleType);
+                if (app.data.HTML[moduleType]) {
+                    HTMLLoaded(el, moduleType);
+                }
 
-                if(
-                    (el.innerHTML!='' && el.getAttribute('data-html')=='true') ||
-                    el.getAttribute('data-html')!='true')
+                if (
+                    (el.innerHTML != '' && el.getAttribute('data-html') == 'true') ||
+                    el.getAttribute('data-html') != 'true')
                 {
                     constructors[moduleType](el);
                     continue;
-                }else{
+                } else {
                     (
                         function(){
                             setTimeout(
@@ -120,9 +128,9 @@ var app=(
                                     buildModules(el);
                                 },
                                 50
-                            )
+                            );
                         }
-                    )(el)
+                    )(el);
                 }
             }
         }
@@ -141,7 +149,7 @@ var app=(
                                 moduleType
                             );
                         }
-                    }
+                    };
                 }
             )(moduleType);
 
@@ -170,20 +178,19 @@ var app=(
             for(var i=0; i<modules.length; i++){
                 constructors[modules[i]](
                     document.getElementById(modules[i]+'-module')
-                )
+                );
             }
         }
 
         function appendDOMNode(el){
             (
-                function(){
+                function () {
                     setTimeout(
-                        function(){
+                        function () {
                             document.querySelector(
                                 el.getAttribute('data-dompath')
-                            ).appendChild(el);
-                        }
-                        ,0
+                                ).appendChild(el);
+                        }, 0
                     );
                 }
             )(el);
@@ -262,76 +269,71 @@ var app=(
         );
 
         function layoutApp(layout){
-            if(!layout.lib)
-                layout.lib=[];
-            if(!layout.modules)
-                layout.modules={};
+            if (!layout.lib)
+                layout.lib = [];
+            if (!layout.modules)
+                layout.modules = {};
 
-            for(var i=0; i<layout.lib.length; i++){
+            for (var i = 0; i < layout.lib.length; i++) {
                 var lib;
-                switch(layout.lib[i].type){
+                switch (layout.lib[i].type) {
                     case 'css' :
                         lib = document.createElement('link');
                         lib.setAttribute('href', layout.lib[i].path);
                         lib.setAttribute('rel', 'stylesheet');
-                        dataStore.CSS[layout.lib[i].path]=lib.outerHTML;
+                        dataStore.CSS[layout.lib[i].path] = lib.outerHTML;
                         break;
                     case 'js':
                         lib = document.createElement('script');
                         lib.setAttribute('async', true);
                         lib.setAttribute('src', layout.lib[i].path);
-                        dataStore.JS[layout.lib[i].path]=lib.outerHTML;
+                        dataStore.JS[layout.lib[i].path] = lib.outerHTML;
                         break;
                 }
 
                 document.head.appendChild(lib);
             }
 
-            for(var i=0; i<layout.modules.logic.length; i++){
-                var newModule=createModuleElement(layout.modules.logic[i],'false','false');
-
+            for (var j = 0; j < layout.modules.logic.length; j++) {
+                var newModule = createModuleElement(layout.modules.logic[j], 'false', 'false');
                 appendDOMNode(newModule);
             }
 
-            var modulesToUse=Object.keys(layout.modules.ui);
-            for(var i=0; i<modulesToUse.length; i++){
-                var modulesInGroup=Object.keys(layout.modules.ui[modulesToUse[i]]);
-                for(var j=0; j<modulesInGroup.length; j++){
-                    var name=modulesInGroup[j];
-                    //console.log(name);
-                }
-            }
+//            var modulesToUse = Object.keys(layout.modules.ui);
+//            for (var i = 0; i < modulesToUse.length; i++) {
+//                var modulesInGroup = Object.keys(layout.modules.ui[modulesToUse[i]]);
+//                for (var j = 0; j < modulesInGroup.length; j++) {
+//                    var name = modulesInGroup[j];
+//                    //console.log(name);
+//                }
+//            }
 
-            var fullList={};
-            var screenList=Object.keys(layout.modules.ui);
-            for(var i=0; i<screenList.length; i++){
-                var screenModules=Object.keys(
-                    layout.modules.ui[screenList[i]]
-                );
+            var fullList = {};
+            var screenList = Object.keys(layout.modules.ui);
+            for (var k = 0; k < screenList.length; k++) {
+                var screenModules = Object.keys( layout.modules.ui[screenList[k]] );
                 //console.log('screenMuduleList',screenModules);
-                for(var j=0; j<screenModules.length; j++){
+                for (var l = 0; l < screenModules.length; l++) {
                     //console.log('screenMudule',screenModules[j]);
-                    fullList[screenModules[j]]=true;
+                    fullList[screenModules[l]] = true;
                 }
             }
             //console.log(fullList)
             if(dataStore.compiled)
               return;
 
-            var layoutModules=Object.keys(fullList);
-            for(var i=0; i<layoutModules.length; i++){
+            var layoutModules = Object.keys(fullList);
+            for (var n = 0; n < layoutModules.length; n++) {
                 //console.log('screenMudule',layoutModules[i]);
-                name=layoutModules[i];
-
-                var newModule=createModuleElement(name);
-
-                appendDOMNode(newModule);
+                //name = layoutModules[n];
+                var tempNewModule = createModuleElement( layoutModules[n] );
+                appendDOMNode(tempNewModule);
             }
 
         }
 
-        function createModuleElement(name,html,css){
-            var newModule=document.createElement("div");
+        function createModuleElement(name, html, css) {
+            var newModule = document.createElement("div");
             //console.log(name)
             if(!html)
                 html='true';
@@ -398,42 +400,40 @@ var app=(
 \************/
 
         /*
-         *
-         * @param {string} id id of element to fetch innerHTML as contents for template
-         *                  or raw string to be used as template if rawString set to true
+         * fill template
+         * 
+         * @param {string} id of element to fetch innerHTML as contents for template or raw string to be used as template if rawString set to true
          * @param {object} values should contain the key value pairs for all template Data
          * @param {bool} rawString use id as a raw string
          * @param {bool} asString return as string
          * @returns {DomElement} if asString is false or not specified will return Filled out Template Element
          * @returns {string} if asString is true will return a filled out template string
          */
-        function fillTemplate(id, values, rawString, asString){
-            var template=id;
+        function fillTemplate(id, values, rawString, asString) {
+            var template = id;
 
-            if(!id)
-                throw new AppError('Templates must specify either id or a string+rawString flag','app.template');
-
-            if(!rawString)
+            if (!id) {
+                throw new AppError('Templates must specify either id or a string+rawString flag', 'app.template');
+            }
+            if(!rawString) {
                 template=document.getElementById(id).innerHTML;
-
-            var keys=Object.keys(values);
-            for(var i=0; i<keys.length; i++){
-                var regEx=new RegExp(
-                    '\\$\\{'+keys[i]+'\\}',
+            }    
+            var keys = Object.keys(values);
+            for (var i = 0; i < keys.length; i++) {
+                var regEx = new RegExp(
+                    '\\$\\{' + keys[i] + '\\}',
                     'g'
-                );
+                    );
 
-                template=template.replace(
-                    regEx,values[keys[i]]
-                )
+                template = template.replace( regEx, values[keys[i]]);
             }
 
             var completeTemplate=template;
 
-            if(!asString){
+            if (!asString) {
                 completeTemplate = document.createElement('div');
-                completeTemplate.innerHTML=template;
-                completeTemplate=completeTemplate.querySelector('*');
+                completeTemplate.innerHTML = template;
+                completeTemplate = completeTemplate.querySelector('*');
             }
 
             return completeTemplate;
@@ -444,17 +444,17 @@ var app=(
          * @param {string} type
          * @returns {string} compiledApp
          */
-        function getCurrentCompiledState(type){
+        function getCurrentCompiledState(type,saveName){
             var html='<html class="compiled-app"><head>${head}</head><body>${body}</body></html>';
-            var defaults='<script src="app/core/app.js"></script>'
-                    +'<script src="app/core/app.layout.js"></script>';
+            var defaults = '<script src="app/core/app.js"></script>' +
+                '<script src="app/core/app.layout.js"></script>';
 
-            if(type=='test'){
-                defaults+='<link rel="stylesheet" type="text/css" href="jasmine/lib/jasmine-2.0.2/jasmine.css">'
-                    +'<script type="text/javascript" src="jasmine/lib/jasmine-2.0.2/jasmine.js"></script>'
-                    +'<script type="text/javascript" src="jasmine/lib/jasmine-2.0.2/jasmine-html.js"></script>'
-                    +'<script type="text/javascript" src="jasmine/lib/jasmine-2.0.2/boot.js"></script>'
-                    +'<script src="app/core/app.test.js"></script>';
+            if (type === 'test') {
+                defaults += '<link rel="stylesheet" type="text/css" href="jasmine/lib/jasmine-2.0.2/jasmine.css">' +
+                    '<script type="text/javascript" src="jasmine/lib/jasmine-2.0.2/jasmine.js"></script>' +
+                    '<script type="text/javascript" src="jasmine/lib/jasmine-2.0.2/jasmine-html.js"></script>' +
+                    '<script type="text/javascript" src="jasmine/lib/jasmine-2.0.2/boot.js"></script>' +
+                    '<script src="app/core/app.test.js"></script>';
             }
 
             this.body='';
@@ -479,7 +479,7 @@ var app=(
                 var keys=Object.keys(dataStore[list[j]]);
                 for(var i=0; i<keys.length;i++){
                     if(list[j]!="HTML"){
-                        console.log(list[j],keys[i]);
+                        //console.log(list[j],keys[i]);
                         this.head+=dataStore[
                             list[j]
                         ][
@@ -488,7 +488,6 @@ var app=(
                         continue;
                     }
 
-                    console.log(list[j],keys[i]);
                     compileModule.call(
                         this,
                         keys[i],
@@ -501,8 +500,7 @@ var app=(
                 }
             }
 
-
-            return fillTemplate(
+            var compiledApp=fillTemplate(
                 html,
                 {
                     head:defaults+this.head,
@@ -514,6 +512,15 @@ var app=(
                 /\s+/g,
                 ' '
             );
+            
+            if(saveName){
+                var download = document.createElement('a');
+                download.href="data:application/octet-stream," + encodeURIComponent(compiledApp);
+				download.download = saveName+'.html';
+				download.click();
+            }
+            
+            return compiledApp;
         }
 
 /************\
@@ -549,40 +556,49 @@ var app=(
             
             function fetchAllData(callback){
                 var response={};
-                for(var key in localStorage){
-                    response[key]=localStorage.getItem(key);
+                for (var key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                       response[key] = localStorage.getItem(key);
+                    }
                 }               
-                
-                runCallback(callback,response);
+                runCallback(callback, response);
             }
             
-            function useLocalStorage(command,data,callback){
-                if(!command || !data)
-                    return;
-                
-                var response={};
-                for(var key in data){
-                    if(command!=='setItem'){
-                        response[key]=localStorage[command](key);
-                        continue;
-                    }
-                    
-                    response[key]=localStorage[command](key,data[key]);
+            /**
+             * use local storage functionality
+             * 
+             * @param {string} command
+             * @param {Object} data
+             * @param {function} callback
+             * @returns {void}
+             */
+            function useLocalStorage(command, data, callback) {
+                if(!command || !data) {
+                    return ;
                 }
                 
-                if(command!='getItem')
-                    response=undefined;
-            
+                var response = {};
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        if (command !== 'setItem') {
+                            response[key] = localStorage[command](key);
+                            continue;
+                        }
+                        response[key] = localStorage[command](key, data[key]);
+                    }
+                }
+                
+                if (command != 'getItem') {
+                    response = undefined;
+                }
                 runCallback(callback,response);
             }
             
-            function runCallback(callback,response){
-                if(!callback)
+            function runCallback(callback, response) {
+                if (!callback)
                     return;
-                
-                callback(
-                    response
-                );
+
+                callback(response);
             }
             
             function html5get(data,callback){
@@ -607,28 +623,28 @@ var app=(
                 useLocalStorage('getItem',data,callback);
             }
             
-            function html5set(data,callback){
-                useLocalStorage('setItem',data,callback);
+            function html5set(data, callback) {
+                useLocalStorage('setItem', data, callback);
             }
             
-            function html5remove(data,callback){
-                if(typeof data === "string"){
-                    localStorage.remove(data);
+            function html5remove(data, callback) {
+                if (typeof data === "string") {
+                    localStorage.removeItem(data);
                     runCallback(
                         callback,
                         undefined
-                    );
+                        );
                     return;
                 }
-                useLocalStorage('remove',data,callback);
+                useLocalStorage('remove', data, callback);
             }
             
-            function html5clear(callback){
+            function html5clear(callback) {
                 localStorage.clear();
                 runCallback(
                     callback,
                     undefined
-                );
+                    );
             }
             
             function chromeGet(data,callback){
@@ -650,11 +666,11 @@ var app=(
             if(localStorage){
                 storage.get=html5get;
                 storage.set=html5set;
-                storage.remove=html5set;
+                storage.remove=html5remove;
                 storage.clear=html5clear;
             }
             
-            if(chrome){
+            if(window.chrome){
                 if(!chrome.storage && !localStorage){
                     console.log('no supported storage methods');
                     return storage;
@@ -676,44 +692,51 @@ var app=(
 /************\
     Events
 \************/
-        function registerEvent(eventName,handler){
-            if(!events[eventName])
-                events[eventName]=[];
+                        
+        /**
+         * register application event
+         * 
+         * @param {string} eventName
+         * @param {string|function} handler
+         * @returns {void}
+         */
+        function registerEvent(eventName, handler) {
+            if (!events[eventName])
+                events[eventName] = [];
 
             events[eventName].push(handler);
         }
 
         function removeEvent(eventName){
-            delete events[eventName]
+            delete events[eventName];
         }
 
         function triggerEvent(eventName){
             if(!events[eventName])
                 return;
 
-            var totalEvents=events[eventName].length,
-                args=Array.prototype.slice.call(arguments,1);
+            var totalEvents = events[eventName].length,
+                args = Array.prototype.slice.call(arguments, 1);
 
-            for(var i=0; i<totalEvents; i++){
+            for (var i = 0; i < totalEvents; i++) {
                 (
                     function(event){
                         setTimeout(
-                            function(){
-                                event.apply(null,args);
-                            }
-                            ,0
+                            function () {
+                                event.apply(null, args);
+                            }, 0
                         );
                     }
                 )(events[eventName][i],args);
             }
         }
 
-        window.exports=addConstructor;
+        window.exports = addConstructor;
         document.addEventListener(
             'readystatechange',
-            function(){
-                dataStore.compiled=document.querySelector('html').classList.contains('compiled-app');
-                if(!dataStore.compiled){
+            function () {
+                dataStore.compiled = document.querySelector('html').classList.contains('compiled-app');
+                if (!dataStore.compiled) {
                     initModules();
                     return;
                 }
@@ -739,7 +762,6 @@ var app=(
             exists          : checkModuleExists,
             data            : dataStore,
             storage         : new Storage()
-        }
-
+        };
     }
 )();
