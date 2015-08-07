@@ -1,0 +1,10 @@
+/*
+    CSS for the helloWorld module.
+    Do not leave file empty.
+*/
+
+.helloWorld-module{
+    width:300px;
+    top:90px;
+    left:calc(50% - 150px);
+}

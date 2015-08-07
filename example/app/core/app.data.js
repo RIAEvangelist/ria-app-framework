@@ -1,1 +1,0 @@
-app.data.myVar='someValue';
